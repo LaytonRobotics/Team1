@@ -49,7 +49,8 @@ void pre_auton( void ) {
 }
 
 void autonomous( void ) {
-  
+  AutoDrive.driveFor(fwd, 10, distanceUnits::in);
+  AutoDrive.turnFor(turnType::right, 90, deg, 100, rpm);
 }
 
 void usercontrol( void ) {
