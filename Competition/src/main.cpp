@@ -1,11 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       C:\Users\IronK                                            */
-/*    Created:      Thu Sep 12 2019                                           */
-/*    Description:  V5 project                                                */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
 #include "vex.h"
 #include "vision.h"
 using namespace vex;
@@ -20,14 +12,14 @@ motor BL = motor(PORT2, ratio18_1, false);
 motor FR = motor(PORT20, ratio18_1, true);
 motor BR = motor(PORT19, ratio18_1, true);
 motor A = motor(PORT13, ratio36_1, false);
-motor IL = motor(PORT14, ratio36_1, true);
+motor IL = motor(PORT15, ratio36_1, true);
 motor IR = motor(PORT12, ratio36_1, false);
 motor C = motor(PORT3, ratio36_1, true);
 motor_group LM(FL, BL);
 motor_group RM(FR, BR);
 drivetrain AutoDrive(LM, RM, 320, 381, distanceUnits::mm);
 
-void MoveV(double speed_pct, double L_Degrees, double R_Degrees){
+void driveY(double speed_pct, double L_Degrees, double R_Degrees){
   speed_pct *= 2;
   FL.startRotateFor(L_Degrees, deg, speed_pct, rpm);
   BL.startRotateFor(L_Degrees, deg, speed_pct, rpm);
@@ -35,12 +27,16 @@ void MoveV(double speed_pct, double L_Degrees, double R_Degrees){
   BR.rotateFor(R_Degrees, deg, speed_pct, rpm);
 }
 
-void MoveH(double speed_pct, double Degrees){
+void driveX(double speed_pct, double Degrees){
   speed_pct *= 2;
   FL.startRotateFor(-Degrees, deg, speed_pct, rpm);
   BL.startRotateFor(Degrees, deg, speed_pct, rpm);
   FR.startRotateFor(-Degrees, deg, speed_pct, rpm);
   BR.rotateFor(Degrees, deg, speed_pct, rpm);
+}
+
+void rotate(double d){
+  AutoDrive.turnFor(turnType::right, d*1.451, deg, 100, rpm);
 }
 
 
@@ -49,8 +45,8 @@ void pre_auton( void ) {
 }
 
 void autonomous( void ) {
-  AutoDrive.driveFor(fwd, 10, distanceUnits::in);
-  AutoDrive.turnFor(turnType::right, 90, deg, 100, rpm);
+  //AutoDrive.driveFor(fwd, 14, distanceUnits::in);
+  rotate(360);
 }
 
 void usercontrol( void ) {
@@ -126,9 +122,6 @@ void usercontrol( void ) {
   }
 }
 
-//
-// Main will set up the competition functions and callbacks.
-//
 int main() {
     //Set up callbacks for autonomous and driver control periods.
     Competition.autonomous( autonomous );
@@ -143,8 +136,3 @@ int main() {
     }    
        
 }
-
-
-
-
-
