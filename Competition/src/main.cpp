@@ -17,7 +17,7 @@ motor IR = motor(PORT12, ratio36_1, false);
 motor C = motor(PORT3, ratio36_1, true);
 motor_group LM(FL, BL);
 motor_group RM(FR, BR);
-drivetrain AutoDrive(LM, RM, 320, 381, distanceUnits::mm);
+drivetrain AutoDrive(LM, RM, 320, 38);
 
 void driveY(double speed_pct, double L_Degrees, double R_Degrees){
   speed_pct *= 2;
