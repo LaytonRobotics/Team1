@@ -29,32 +29,85 @@ void driveY(double speed_pct, double L_Degrees, double R_Degrees){
 
 void driveX(double speed_pct, double Degrees){
   speed_pct *= 2;
-  FL.startRotateFor(-Degrees, deg, speed_pct, rpm);
-  BL.startRotateFor(Degrees, deg, speed_pct, rpm);
-  FR.startRotateFor(-Degrees, deg, speed_pct, rpm);
-  BR.rotateFor(Degrees, deg, speed_pct, rpm);
+  FL.startRotateFor(-Degrees*100, deg, speed_pct, rpm);
+  BL.startRotateFor(Degrees*100, deg, speed_pct, rpm);
+  FR.startRotateFor(-Degrees*100, deg, speed_pct, rpm);
+  BR.rotateFor(Degrees*100, deg, speed_pct, rpm);
 }
 
 void rotate(double d){
   AutoDrive.turnFor(turnType::right, d*1.451, deg, 100, rpm);
 }
 
-
 void pre_auton( void ) {
   C.resetRotation();
 }
 
+void drive(double inches){
+  AutoDrive.driveFor(fwd, inches, distanceUnits::in);
+}
+
+void setIntakeSpeed(double speed){
+  IL.setVelocity(speed,pct);
+  IR.setVelocity(speed,pct);
+  IL.spin(fwd);
+  IR.spin(fwd);
+}
+
+void stopIntake(){
+  IR.stop(brake);
+  IL.stop(brake);
+}
+
+void armUp(){
+  A.setVelocity(100, pct);
+  A.rotateTo(650,deg);
+  A.rotateTo(0,deg);
+  A.rotateTo(110,deg);
+}
+
+void auto1(){
+  armUp();
+  setIntakeSpeed(80);
+  drive(18);
+  stopIntake();
+  drive(-10);
+  driveX(70,-4);
+  rotate(-820);
+  drive(9);
+  driveX(70,4);
+  setIntakeSpeed(-80);
+  task::sleep(1500);
+  stopIntake();
+  drive(-5);
+}
+
+void auto2(){
+  armUp();
+  setIntakeSpeed(80);
+  drive(15);
+  stopIntake();
+  rotate(820);
+  A.rotateTo(750,deg);
+  drive(10);
+  setIntakeSpeed(-80);
+  task::sleep(1500);
+  stopIntake();
+  drive(-5);
+}
+
 void autonomous( void ) {
-  //AutoDrive.driveFor(fwd, 14, distanceUnits::in);
-  rotate(360);
+  auto2();
 }
 
 void usercontrol( void ) {
   while (1) {
+    // DEFINE VARIABLES FOR MECHANUM
     double LX = Controller1.Axis4.position(pct);
     double LY = Controller1.Axis3.position(pct);
     double RX = Controller1.Axis1.position(pct);
 
+    // DRIVE FOR MECHANUM
     FL.spin(fwd, ((LY + RX + LX) * .75), pct);
     BL.spin(fwd, ((LY + RX - LX) * .75), pct);
     FR.spin(fwd, ((LY - RX + LX) * .75), pct);
@@ -70,7 +123,6 @@ void usercontrol( void ) {
       A.spin(fwd, 0, rpm);
       A.setStopping(hold);
     }
-
     float ISpeed;
     if(Controller1.ButtonDown.pressing()){
       ISpeed = 10;
@@ -100,7 +152,6 @@ void usercontrol( void ) {
         C.spin(fwd, 0, rpm);
         C.setStopping(hold);
       }
-        
     }
     else if(Controller1.ButtonB.pressing()){
       if(C.rotation(deg) > 0){
@@ -115,8 +166,6 @@ void usercontrol( void ) {
       C.spin(fwd, 0, rpm);
       C.setStopping(hold);
     }
-    
-
     Controller1.Screen.print(C.rotation(deg));
     task::sleep(20);
   }
