@@ -35,15 +35,17 @@ void driveX(double speed_pct, double Degrees){
   BR.rotateFor(Degrees*100, deg, speed_pct, rpm);
 }
 
-void rotate(double d){
-  AutoDrive.turnFor(turnType::right, d*1.451, deg, 100, rpm);
+void rotate(double d,double speed=100){
+  AutoDrive.turnFor(turnType::right, d*1.451, deg, speed, rpm);
 }
 
 void pre_auton( void ) {
   C.resetRotation();
+  A.resetRotation();
 }
 
-void drive(double inches){
+void drive(double inches,double vel=100){
+  AutoDrive.setVelocity(vel, velocityUnits::pct);
   AutoDrive.driveFor(fwd, inches, distanceUnits::in);
 }
 
@@ -63,7 +65,7 @@ void armUp(){
   A.setVelocity(100, pct);
   A.rotateTo(650,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(110,deg);
+  A.rotateTo(75,deg);
 }
 
 void auto1(){
@@ -72,14 +74,15 @@ void auto1(){
   drive(18);
   stopIntake();
   drive(-10);
-  driveX(70,-4);
+  driveX(70,-6);
   rotate(-820);
   drive(9);
-  driveX(70,4);
+  driveX(70,6);
+  drive(4);
   setIntakeSpeed(-80);
   task::sleep(1500);
   stopIntake();
-  drive(-5);
+  drive(-8);
 }
 
 void auto2(){
@@ -88,16 +91,27 @@ void auto2(){
   drive(15);
   stopIntake();
   rotate(820);
-  A.rotateTo(750,deg);
-  drive(10);
+  A.rotateTo(700,deg);
+  drive(13);
   setIntakeSpeed(-80);
   task::sleep(1500);
   stopIntake();
   drive(-5);
 }
 
+void auto3(){
+  int dist = 45;
+  armUp();
+  setIntakeSpeed(90);
+  drive(12,80);
+  drive(dist-12,12);
+  stopIntake();
+  drive(-dist,100);
+  rotate(90);
+}
+
 void autonomous( void ) {
-  auto2();
+  auto3();
 }
 
 void usercontrol( void ) {
