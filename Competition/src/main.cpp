@@ -12,7 +12,7 @@ motor BL = motor(PORT2, ratio18_1, false);
 motor FR = motor(PORT20, ratio18_1, true);
 motor BR = motor(PORT19, ratio18_1, true);
 motor A = motor(PORT13, ratio36_1, false);
-motor IL = motor(PORT15, ratio36_1, true);
+motor IL = motor(PORT4, ratio36_1, true);
 motor IR = motor(PORT12, ratio36_1, false);
 motor C = motor(PORT3, ratio36_1, true);
 motor_group LM(FL, BL);
