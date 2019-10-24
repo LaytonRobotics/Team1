@@ -42,6 +42,7 @@ void rotate(double d,double speed=100){
 void pre_auton( void ) {
   C.resetRotation();
   A.resetRotation();
+  C.setVelocity(20, pct);
 }
 
 void drive(double inches,double vel=100){
@@ -87,7 +88,7 @@ void auto1(){
 
 void auto2(){
   armUp();
-  setIntakeSpeed(80);
+  setIntakeSpeed(85);
   drive(15);
   stopIntake();
   rotate(820);
@@ -102,13 +103,27 @@ void auto2(){
 void auto3(){
   int dist = 45;
   armUp();
-  setIntakeSpeed(90);
+  setIntakeSpeed(80);
   drive(12,80);
   drive(dist-12,12);
+  setIntakeSpeed(-50);
+  task::sleep(1500);
   stopIntake();
-  drive(-dist,100);
-  rotate(90);
+  drive(-dist+5,100);
+  rotate(900);
+  drive(12,50);
+  rotate(300);
+  drive(5,60);
+  setIntakeSpeed(-20);
+  task::sleep(2500);
+  stopIntake();
+  A.rotateTo(-5,deg);
+  C.rotateTo(90,deg);
+  drive(2,15);
+  drive(-5,100);
 }
+
+// 900 is about 90 degrees in rotate function
 
 void autonomous( void ) {
   auto3();
