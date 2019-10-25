@@ -66,7 +66,7 @@ void armUp(){
   A.setVelocity(100, pct);
   A.rotateTo(650,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(75,deg);
+  A.rotateTo(90,deg);
 }
 
 void auto1(){
@@ -115,12 +115,13 @@ void auto3(){
   rotate(300);
   drive(5,60);
   setIntakeSpeed(-20);
-  task::sleep(2500);
+  task::sleep(2250);
   stopIntake();
   A.rotateTo(-5,deg);
-  C.rotateTo(90,deg);
+  C.rotateTo(175,deg);
   drive(2,15);
   drive(-5,100);
+  C.rotateTo(0, deg);
 }
 
 // 900 is about 90 degrees in rotate function
