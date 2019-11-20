@@ -13,7 +13,7 @@ motor FR = motor(PORT20, ratio18_1, true);
 motor BR = motor(PORT19, ratio18_1, true);
 motor A = motor(PORT13, ratio36_1, false);
 motor IL = motor(PORT4, ratio36_1, true);
-motor IR = motor(PORT12, ratio36_1, false);
+motor IR = motor(PORT16, ratio36_1, false);
 motor C = motor(PORT3, ratio36_1, true);
 motor_group LM(FL, BL);
 motor_group RM(FR, BR);
@@ -46,7 +46,7 @@ void pre_auton( void ) {
 }
 
 void drive(double inches,double vel=100){
-  AutoDrive.setVelocity(vel, velocityUnits::pct);
+  AutoDrive.setDriveVelocity(vel, velocityUnits::pct);
   AutoDrive.driveFor(fwd, inches, distanceUnits::in);
 }
 
@@ -131,20 +131,18 @@ void autonomous( void ) {
 }
 
 void usercontrol( void ) {
-  bool LastX = 0;
   while (1) {
-    // DEFINE VARIABLES FOR MECANUM
+    // DEFINE VARIABLES FOR MECHANUM
     double LX = Controller1.Axis4.position(pct);
     double LY = Controller1.Axis3.position(pct);
     double RX = Controller1.Axis1.position(pct);
 
-    // DRIVE FOR MECANUM
+    // DRIVE FOR MECHANUM
     FL.spin(fwd, ((LY + RX + LX) * .75), pct);
     BL.spin(fwd, ((LY + RX - LX) * .75), pct);
     FR.spin(fwd, ((LY - RX + LX) * .75), pct);
     BR.spin(fwd, ((LY - RX - LX) * .75), pct);
 
-    //Move Arm
     if(Controller1.ButtonR1.pressing()){
       A.spin(fwd, 100, pct);
     }
@@ -155,8 +153,6 @@ void usercontrol( void ) {
       A.spin(fwd, 0, rpm);
       A.setStopping(hold);
     }
-    
-    //Control Intake
     float ISpeed;
     if(Controller1.ButtonDown.pressing()){
       ISpeed = 10;
@@ -178,15 +174,13 @@ void usercontrol( void ) {
       IL.setStopping(hold);
       IR.setStopping(hold);
     }
-    
-    //Push chute forward
     if(Controller1.ButtonA.pressing()){
       if(C.rotation(deg) < 175){
         C.spin(fwd, (15 - 13.5 * ((C.rotation(deg)) / 175)), rpm);
       }  
       else{
         C.spin(fwd, 0, rpm);
-        C.setStopping(coast);
+        C.setStopping(hold);
       }
     }
     else if(Controller1.ButtonB.pressing()){
@@ -195,20 +189,12 @@ void usercontrol( void ) {
       }  
       else{
         C.spin(fwd, 0, rpm);
-        C.setStopping(coast);
-      }
-    }
-    else if(Controller1.ButtonX.pressing()){
-      if(!LastX){
-        LastX = 1;
-        C.startRotateFor(-180, deg, 15, rpm);
-        C.resetRotation();
+        C.setStopping(hold);
       }
     }
     else{
-      LastX = 0;
       C.spin(fwd, 0, rpm);
-      C.setStopping(coast);
+      C.setStopping(hold);
     }
     Controller1.Screen.print(C.rotation(deg));
     task::sleep(20);
@@ -217,8 +203,8 @@ void usercontrol( void ) {
 
 int main() {
     //Set up callbacks for autonomous and driver control periods.
-    Competition.autonomous(autonomous);
-    Competition.drivercontrol(usercontrol);
+    Competition.autonomous( autonomous );
+    Competition.drivercontrol( usercontrol );
     
     //Run the pre-autonomous function. 
     pre_auton();
