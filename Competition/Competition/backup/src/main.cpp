@@ -35,8 +35,8 @@ void driveX(double speed_pct, double Degrees){
   BR.rotateFor(Degrees, deg, speed_pct, rpm);
 }
 
-void rotate(double d){
-  AutoDrive.turnFor(turnType::right, d*1.2, deg, 100, rpm);
+void rotate(double d,double speed = 100){
+  AutoDrive.turnFor(turnType::right, d*1.2, deg, speed, rpm);
 }
 
 void pre_auton( void ) {
@@ -64,36 +64,36 @@ void stopIntake(){
 
 void armUp(){
   A.setVelocity(100, pct);
-  A.rotateTo(650,deg);
+  A.rotateTo(640,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(90,deg);
+  A.rotateTo(100,deg);
 }
 
 
 void auto3(){
   int dist = 50;
   armUp();
-  setIntakeSpeed(90);
-  drive(12,80);
-  drive(dist-12,12);
-  //setIntakeSpeed(-50);
-  //task::sleep(1500);
+  setIntakeSpeed(100);
+  drive(8,80);
+  drive(dist-8,12);
   stopIntake();
   drive(-dist+5,100);
-  rotate(90);
+  rotate(90,70);
   drive(12,50);
-  rotate(30);
-  drive(5,60);
+  rotate(20);
+  //return;
+  drive(10,60);
   setIntakeSpeed(-20);
-  task::sleep(2250);
+  task::sleep(2100);
   stopIntake();
   A.rotateTo(-5,deg);
-  C.rotateTo(175,deg);
+  C.rotateTo(160,deg);
   drive(2,15);
-  task::sleep(2000);
-  drive(-5,75);
+  task::sleep(500);
+  drive(-5,50);
   C.rotateTo(0, deg);
 }
+
 
 void autonomous( void ) {
   auto3();
@@ -101,6 +101,7 @@ void autonomous( void ) {
 
 void usercontrol( void ) {
   while (true) {
+    
     double LX = Controller1.Axis4.position(pct);
     double LY = Controller1.Axis3.position(pct);
     double RX = Controller1.Axis1.position(pct);
@@ -148,7 +149,7 @@ void usercontrol( void ) {
       }  
       else{
         C.spin(fwd, 0, rpm);
-        C.setStopping(hold);
+        C.setStopping(coast);
       }
         
     }
@@ -158,12 +159,12 @@ void usercontrol( void ) {
       }  
       else{
         C.spin(fwd, 0, rpm);
-        C.setStopping(hold);
+        C.setStopping(coast);
       }
     }
     else{
       C.spin(fwd, 0, rpm);
-      C.setStopping(hold);
+      C.setStopping(coast);
     }
     
     task::sleep(20);
