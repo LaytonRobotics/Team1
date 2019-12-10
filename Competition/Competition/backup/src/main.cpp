@@ -66,9 +66,8 @@ void armUp(){
   A.setVelocity(100, pct);
   A.rotateTo(640,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(100,deg);
+  A.rotateTo(120,deg);
 }
-
 
 void auto3(){
   int dist = 50;
@@ -93,7 +92,6 @@ void auto3(){
   drive(-5,50);
   C.rotateTo(0, deg);
 }
-
 
 void autonomous( void ) {
   auto3();
