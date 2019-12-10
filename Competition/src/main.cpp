@@ -100,16 +100,15 @@ void auto2(){
   drive(-5);
 }
 
-void auto3(int rev = 1){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (FRONT)
+void auto3(int rev = 1,bool s=false){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (FRONT)
 
   // Setup
-    int dist = 46; // total amount to drive forward
+    int dist = s ? 50 : 46; // total amount to drive forward
     armUp(); // Arm all of the way up then down thene up a little
-    drive(6,85); // move forward fast
+    drive(8,30); // move forward fast
     setIntakeSpeed(55); 
-
   // Drive Forward
-    drive(dist-6,30); // then slow
+    drive(dist-8,30); // then slow
     task::sleep(500); // stop then intake for another .5 secs
     stopIntake();
 
@@ -121,7 +120,7 @@ void auto3(int rev = 1){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (FRONT)
     rotate(50*rev,75); 
     drive(10,50); 
 
-    rotate(31*rev,80);
+    rotate(33*rev,80);
     drive(11,60);
 
 
@@ -140,11 +139,22 @@ void auto3(int rev = 1){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (FRONT)
     drive(-8,50);
     stopIntake();
     C.rotateTo(0, deg);
+
+    if(!s) return; // CONTINUE IF SKILLS
+
+    // TURN TOWARDS TOWER
+
+    drive(-8,50);
+
+    rotate(-110*rev);
+
+
 }
 
 
 void autonomous( void ) {
-  auto3(-1); // 1 for red, -1 for blue
+  bool SKILLS = true;
+  auto3(1,SKILLS); // 1 for red, -1 for blue
 }
 
 void usercontrol( void ) {
