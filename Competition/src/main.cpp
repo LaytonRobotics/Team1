@@ -66,7 +66,7 @@ void armUp(){
   A.setVelocity(100, pct);
   A.rotateTo(650,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(95,deg);
+  A.rotateTo(90,deg);
 }
 
 void auto1(){
@@ -118,10 +118,14 @@ void auto3(int rev = 1,bool s=false){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (
 
   // Get in Corner
     rotate(50*rev,75); 
+    if(rev < 0) rotate(30*rev);
     drive(10,50); 
 
     rotate(33*rev,80);
-    drive(11,60);
+    if(rev < 0){
+      drive(9);
+    }
+    else drive(11,60);
 
 
   // Make Tower
@@ -145,16 +149,30 @@ void auto3(int rev = 1,bool s=false){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (
     // TURN TOWARDS TOWER
 
     drive(-8,50);
+    rotate(-118*rev);
 
-    rotate(-110*rev);
+    A.rotateTo(90,deg,false);
+
+    drive(25,100);
+
+    setIntakeSpeed(55);
+
+    drive(8,30);
+
+
+    drive(-8);
+    
+    stopIntake();
+
+    A.rotateTo(600,deg);
 
 
 }
 
 
 void autonomous( void ) {
-  bool SKILLS = true;
-  auto3(1,SKILLS); // 1 for red, -1 for blue
+    bool SKILLS = false;
+    auto3(1,SKILLS); // 1 for red, -1 for blue
 }
 
 void usercontrol( void ) {
