@@ -12,7 +12,7 @@ motor BL = motor(PORT2, ratio18_1, false);
 motor FR = motor(PORT20, ratio18_1, true);
 motor BR = motor(PORT19, ratio18_1, true);
 motor A = motor(PORT13, ratio36_1, false);
-motor IL = motor(PORT4, ratio18_1, true);
+motor IL = motor(PORT6, ratio18_1, true);
 motor IR = motor(PORT16, ratio18_1, false);
 motor C = motor(PORT3, ratio36_1, true);
 motor_group LM(FL, BL);
@@ -62,51 +62,50 @@ void stopIntake(){
   IL.stop(brake);
 }
 
+
+void makeTower(){
+    setIntakeSpeed(-20);
+    task::sleep(1200);
+    A.rotateTo(-10,deg);
+    setIntakeSpeed(-10);
+    C.rotateTo(90,deg);
+    C.setVelocity(30, pct);
+    C.rotateTo(140,deg);
+    drive(2,15);
+
+  // Back off and reset
+    setIntakeSpeed(-45);
+    drive(-8,50);
+    stopIntake();
+    C.rotateTo(0, deg);
+}
+
 void armUp(){
   A.setVelocity(100, pct);
   A.rotateTo(650,deg);
   A.rotateTo(0,deg);
-  A.rotateTo(90,deg);
+  A.rotateTo(95,deg);
 }
 
 void auto1(){
   armUp();
-  setIntakeSpeed(80);
-  drive(18);
+  setIntakeSpeed(70);
+  drive(18,30);
   stopIntake();
-  drive(-10);
-  driveX(70,-6);
-  rotate(-820);
-  drive(9);
-  driveX(70,6);
-  drive(4);
-  setIntakeSpeed(-80);
-  task::sleep(1500);
+  rotate(-90);
+  setIntakeSpeed(70);
+  drive(10,30);
   stopIntake();
-  drive(-8);
 }
 
-void auto2(){
-  armUp();
-  setIntakeSpeed(85);
-  drive(15);
-  stopIntake();
-  rotate(820);
-  A.rotateTo(700,deg);
-  drive(13);
-  setIntakeSpeed(-80);
-  task::sleep(1500);
-  stopIntake();
-  drive(-5);
-}
 
 void auto3(int rev = 1,bool s=false){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (FRONT)
 
   // Setup
-    int dist = s ? 50 : 46; // total amount to drive forward
+    int dist = s ? 43 : 36; // total amount to drive forward
     armUp(); // Arm all of the way up then down thene up a little
     drive(8,30); // move forward fast
-    setIntakeSpeed(55); 
+    setIntakeSpeed(65); 
   // Drive Forward
     drive(dist-8,30); // then slow
     task::sleep(500); // stop then intake for another .5 secs
@@ -118,66 +117,51 @@ void auto3(int rev = 1,bool s=false){ // THIS AUTONOUS GETS 4 BLOCKS ON GROUND (
 
   // Get in Corner
     rotate(50*rev,75); 
-    if(rev < 0) rotate(30*rev);
+    if(rev < 0) rotate(50*rev);
     drive(10,50); 
 
-    rotate(33*rev,80);
+    if(rev>0) rotate(33*rev,80);
     if(rev < 0){
-      drive(9);
+      //drive(3);
     }
     else drive(11,60);
 
 
   // Make Tower
-    setIntakeSpeed(-20);
-    task::sleep(1200);
-    A.rotateTo(-10,deg);
-    setIntakeSpeed(-10);
-    C.rotateTo(90,deg);
-    C.setVelocity(30, pct);
-    C.rotateTo(130,deg);
-    drive(2,15);
-
-  // Back off and reset
-    setIntakeSpeed(-45);
-    drive(-8,50);
-    stopIntake();
-    C.rotateTo(0, deg);
+    makeTower();
 
     if(!s) return; // CONTINUE IF SKILLS
 
     // TURN TOWARDS TOWER
 
     drive(-8,50);
-    rotate(-118*rev);
-
+    rotate(-150*rev);
+    drive(5);
+    rotate(40*rev);
     A.rotateTo(90,deg,false);
-
-    drive(25,100);
-
+    drive(20,100);
     setIntakeSpeed(55);
-
     drive(8,30);
-
-
     drive(-8);
-    
     stopIntake();
-
     A.rotateTo(600,deg);
-
-
+    drive(5,50);
+    setIntakeSpeed(-50);
+    task::sleep(1000);
+    drive(-5);
+    stopIntake();
 }
 
 
 void autonomous( void ) {
-    bool SKILLS = false;
-    auto3(1,SKILLS); // 1 for red, -1 for blue
+    //bool SKILLS = false;
+    //auto3(1,SKILLS); // 1 for red, -1 for blue
+    auto1();
 }
 
 void usercontrol( void ) {
   while (true) {
-    // DEFINE VARIABLES FOR MECHANUM
+    // DEFINE VARIABLES FOR MECANUM
     double LX = Controller1.Axis4.position(pct);
     double LY = Controller1.Axis3.position(pct);
     double RX = Controller1.Axis1.position(pct);
@@ -219,20 +203,19 @@ void usercontrol( void ) {
         C.spin(fwd, (15 - 13.5 * ((C.rotation(deg)) / 175)), rpm);
       } else {
         C.spin(fwd, 0, rpm);
-        C.setStopping(hold);
+        C.setStopping(coast);
       }
     } else if(Controller1.ButtonB.pressing()){
       if(C.rotation(deg) > 0){
         C.spin(fwd, -15, rpm);
       } else {
         C.spin(fwd, 0, rpm);
-        C.setStopping(hold);
+        C.setStopping(coast);
       }
     } else{
       C.spin(fwd, 0, rpm);
-      C.setStopping(hold);
+      C.setStopping(coast);
     }
-    Controller1.Screen.print(C.rotation(deg));
     task::sleep(20);
   }
 }
